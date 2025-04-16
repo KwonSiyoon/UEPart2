@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+
 UABAnimInstance::UABAnimInstance()
 {
 	// ¹®ÅÎ °ª ¼³Á¤.
@@ -40,6 +41,5 @@ void UABAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
-
 	}
 }

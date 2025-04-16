@@ -8,7 +8,6 @@
 #include "Camera/CameraComponent.h"
 #include "ABCharacterControlData.h"
 
-
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -95,6 +94,12 @@ AABCharacterPlayer::AABCharacterPlayer()
 		ChangeControlAction = ChangeControlActionRef.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackActionRef(TEXT("/Game/ArenaBattle/Input/Actions/IA_Attack.IA_Attack"));
+	if (AttackActionRef.Object)
+	{
+		AttackAction = AttackActionRef.Object;
+	}
+
 	// 초기 설정.
 	CurrentCharacterControlType = ECharacterControlType::Quarter;
 
@@ -128,6 +133,7 @@ void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	// Binding.
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 	EnhancedInputComponent->BindAction(ChangeControlAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::ChangeCharacterControl);
+	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::Attack);
 	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::ShoulderMove);
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(QuarterMoveAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::QuarterMove);
@@ -235,4 +241,10 @@ void AABCharacterPlayer::QuarterMove(const FInputActionValue& Value)
 
 	// 입력에 따른 방향으로 이동하도록 입력 전달.
 	AddMovementInput(MoveDirection, MovementvectorSize);
+}
+
+void AABCharacterPlayer::Attack()
+{
+	// 공격 입력 처리 함수 호출.
+	ProcessComboCommand();
 }
