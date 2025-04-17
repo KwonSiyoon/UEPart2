@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/ABAnimationAttackInterface.h"
 #include "ABCharacterBase.generated.h"
 
 UENUM()
@@ -15,7 +16,7 @@ enum class ECharacterControlType : uint8
 
 
 UCLASS()
-class ARENABATTLEDEMO_API AABCharacterBase : public ACharacter
+class ARENABATTLEDEMO_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface
 {
 	GENERATED_BODY()
 
@@ -25,47 +26,64 @@ public:
 
 	virtual void SetCharacterControlData(const class UABCharacterControlData* InCharacterControlData);
 
+    // ê³µê²© ê°ì§€ í•¨ìˆ˜ (ì• ë‹˜ ë…¸í‹°íŒŒì´ë¡œë¶€í„° í˜¸ì¶œë¨).
+    virtual void AttackHitCheck() override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:	// Combo Section.
-	// ÄŞº¸ ¾×¼Ç Ã³¸® ÇÔ¼ö.
-	// °ø°İÀ» Ã³À½ Àç»ıÇÒ ¶§¿Í ÄŞº¸ ¾×¼Ç Ã³¸®¸¦ ºĞ±â.
+	// ì½¤ë³´ ì•¡ì…˜ ì²˜ë¦¬ í•¨ìˆ˜.
+	// ê³µê²©ì„ ì²˜ìŒ ì¬ìƒí•  ë•Œì™€ ì½¤ë³´ ì•¡ì…˜ ì²˜ë¦¬ë¥¼ ë¶„ê¸°.
 	void ProcessComboCommand();
 
-	// ÄŞº¸ ¾×¼ÇÀÌ ½ÃÀÛµÉ ¶§ È£ÃâÇÒ ÇÔ¼ö.
+	// ì½¤ë³´ ì•¡ì…˜ì´ ì‹œì‘ë  ë•Œ í˜¸ì¶œí•  í•¨ìˆ˜.
 	void ComboActionBegin();
 
-	// ÄŞº¸°¡ Á¾·áµÉ ¶§ È£ÃâµÉ ÇÔ¼ö.
-	// ¾Ö´Ô ¸ùÅ¸ÁÖ¿¡¼­ Á¦°øÇÏ´Â µ¨¸®°ÔÀÌÆ®¿Í ÆÄ¶ó¹ÌÅÍ ¸ÂÃã.
+	// ì½¤ë³´ê°€ ì¢…ë£Œë  ë•Œ í˜¸ì¶œë  í•¨ìˆ˜.
+	// ì• ë‹˜ ëª½íƒ€ì£¼ì—ì„œ ì œê³µí•˜ëŠ” ë¸ë¦¬ê²Œì´íŠ¸ì™€ íŒŒë¼ë¯¸í„° ë§ì¶¤.
 	void ComboActionEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
-	// ÄŞº¸ Å¸ÀÌ¸Ó ¼³Á¤ ÇÔ¼ö.
+	// ì½¤ë³´ íƒ€ì´ë¨¸ ì„¤ì • í•¨ìˆ˜.
 	void SetComboCheckTimer();
 
-	// Å¸ÀÌ¸Ó ½Ã°£ »çÀÌ¿¡ ÀÔ·ÂÀÌ µé¾î¿Ô´ÂÁö ¿©ºÎ¸¦ È®ÀÎÇÏ´Â ÇÔ¼ö.
+	// íƒ€ì´ë¨¸ ì‹œê°„ ì‚¬ì´ì— ì…ë ¥ì´ ë“¤ì–´ì™”ëŠ”ì§€ ì—¬ë¶€ë¥¼ í™•ì¸í•˜ëŠ” í•¨ìˆ˜.
 	void ComboCheck();
 
+protected: // Dead Section.
+	// ì£½ìŒ ìƒíƒœ ì„¤ì • í•¨ìˆ˜.
+	virtual void SetDead();
+	// ì£½ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ í•¨ìˆ˜.
+	void PlayDeadAnimation();
 
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "CharacterControl", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterControlType, class UABCharacterControlData*> CharacterControlManager;
 
-	// °ø°İ ¸ùÅ¸ÁÖ ¾Ö¼Â
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	// ê³µê²© ëª½íƒ€ì£¼ ì• ì…‹
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> ComboActionMontage;
 
-	// ÄŞº¸ Ã³¸®½Ã »ç¿ëÇÒ µ¥ÀÌÅÍ ¿¡¼Â.
+	// ì½¤ë³´ ì²˜ë¦¬ì‹œ ì‚¬ìš©í•  ë°ì´í„° ì—ì…‹.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UABComboActionData> ComboActionData;
 
 
-	// ÇöÀç Àç»ıÁßÀÎ ÄŞº¸ ´Ü°è.
-	// 0 -> ÄŞº¸ ½ÃÀÛÇÏÁö ¾ÊÀ½. 1/2/3/4 ÄŞº¸°¡ ½ÃÀÛµÊ.
+	// í˜„ì¬ ì¬ìƒì¤‘ì¸ ì½¤ë³´ ë‹¨ê³„.
+	// 0 -> ì½¤ë³´ ì‹œì‘í•˜ì§€ ì•ŠìŒ. 1/2/3/4 ì½¤ë³´ê°€ ì‹œì‘ë¨.
 	int32 CurrentCombo = 0;
 
-	// ÄŞº¸ °¡´É ¿©ºÎ¸¦ ÆÇ´ÜÇÏ±â À§ÇÑ Å¸ÀÌ¸Ó ÇÚµé.
+	// ì½¤ë³´ ê°€ëŠ¥ ì—¬ë¶€ë¥¼ íŒë‹¨í•˜ê¸° ìœ„í•œ íƒ€ì´ë¨¸ í•¸ë“¤.
 	FTimerHandle ComboTimerHandle;
 
-	// ÄŞº¸ Å¸ÀÌ¸Ó ÀÌÀü¿¡ ÀÔ·ÂÀÌ µé¾î¿Ô´ÂÁö¸¦ È®ÀÎÇÏ´Â ºÒ¸®¾ğ º¯¼ö.
+	// ì½¤ë³´ íƒ€ì´ë¨¸ ì´ì „ì— ì…ë ¥ì´ ë“¤ì–´ì™”ëŠ”ì§€ë¥¼ í™•ì¸í•˜ëŠ” ë¶ˆë¦¬ì–¸ ë³€ìˆ˜.
 	bool HasNextComboCommand = false;
 
+protected:	// Dead Section.
+	// ì£½ëŠ” ëª½íƒ€ì£¼ ì• ì…‹.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> DeadMontage;
+
+	// ì£½ì€ ë’¤ì— ì•¡í„°ë¥¼ ì œê±°í•˜ê¸° ì „ê¹Œì§€ ëŒ€ê¸°í•  ì‹œê°„ ê°’.
+	float DeadEventDelayTime = 5.0f;
 };
