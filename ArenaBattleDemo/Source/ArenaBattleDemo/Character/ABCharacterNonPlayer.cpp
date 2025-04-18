@@ -24,6 +24,6 @@ void AABCharacterNonPlayer::SetDead()
 			}
 		),
 		DeadEventDelayTime,		// 타이머 설정 시간.
-		false);		// 반복 여붑 설정(반복 안함).
+		false);		// 반복 여부 설정(반복 안함).
 
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/ABAnimationAttackInterface.h"
+#include "Interface/ABCharacterWidgetInterface.h"
 #include "ABCharacterBase.generated.h"
 
 UENUM()
@@ -16,7 +17,7 @@ enum class ECharacterControlType : uint8
 
 
 UCLASS()
-class ARENABATTLEDEMO_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface
+class ARENABATTLEDEMO_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface, public IABCharacterWidgetInterface
 {
 	GENERATED_BODY()
 
@@ -26,10 +27,14 @@ public:
 
 	virtual void SetCharacterControlData(const class UABCharacterControlData* InCharacterControlData);
 
+	virtual void SetupCharacterWidget(class UUserWidget* InUserWidget) override;
+
     // 공격 감지 함수 (애님 노티파이로부터 호출됨).
     virtual void AttackHitCheck() override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void PostInitializeComponents() override;
 
 protected:	// Combo Section.
 	// 콤보 액션 처리 함수.
@@ -86,4 +91,11 @@ protected:	// Dead Section.
 
 	// 죽은 뒤에 액터를 제거하기 전까지 대기할 시간 값.
 	float DeadEventDelayTime = 5.0f;
+
+protected:	// Stat & Widget Section.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UABCharacterStatComponent> Stat;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UABWidgetComponent> HpBar;
 };
