@@ -15,6 +15,12 @@
 
 #include "UI/ABWidgetComponent.h"
 #include "UI/ABHpBarWidget.h"
+#include "Item/ABWeaponItemData.h"
+
+#include "Components/SkeletalMeshComponent.h"
+
+// 로그 카테고리 정의.
+DEFINE_LOG_CATEGORY(LogABCharacter);
 
 // Sets default values
 AABCharacterBase::AABCharacterBase()
@@ -118,6 +124,16 @@ AABCharacterBase::AABCharacterBase()
 		// 콜리전 끄기.
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+
+	// Item Section.
+	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::EquipWeapon)));
+	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion)));
+	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll)));
+
+	// 무기를 보여줄 컴포넌트 생성.
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	// 메시 컴포넌트 하위로 계층을 설정하고, 이떄 hand_rSocket 소켓에 부착.
+	Weapon->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 
 }
 
@@ -374,6 +390,44 @@ void AABCharacterBase::PlayDeadAnimation()
 		const float PlayRate = 1.0f;
 		AnimInstance->Montage_Play(DeadMontage, PlayRate);
 	}
+}
+
+void AABCharacterBase::TakeItem(UABItemData* InItemData)
+{
+	// 아이템 정보가 넘어오면 처리.
+	if (InItemData)
+	{
+		TakeItemActions[(uint8)InItemData->Type].ItemDelegate.ExecuteIfBound(InItemData);
+	}
+}
+
+void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
+{
+	UE_LOG(LogABCharacter, Log, TEXT("Drink Potion."));
+}
+
+void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
+{
+	//UE_LOG(LogABCharacter, Log, TEXT("Equip Weapon."));
+	// 함수에 전달된 아이템 데이터 애셋을 무기 데이터로 변환.
+	UABWeaponItemData* WeaponItemData = Cast<UABWeaponItemData>(InItemData);
+	// 변환에 성곤하면
+	if (WeaponItemData)
+	{
+		// 무기 메시가 아직 로딩 안된 경우, 로드 처리.
+		if (WeaponItemData->WeaponMesh.IsPending())
+		{
+			WeaponItemData->WeaponMesh.LoadSynchronous();
+		}
+
+		// 무기 컴포넌트에 로드가 완료된 스켈레탈 메시 설정.
+		Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
+	}
+}
+
+void AABCharacterBase::ReadScroll(UABItemData* InItemData)
+{
+	UE_LOG(LogABCharacter, Log, TEXT("Read Scroll."));
 }
 
 
