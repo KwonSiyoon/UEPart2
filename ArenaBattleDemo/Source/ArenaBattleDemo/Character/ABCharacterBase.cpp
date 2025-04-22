@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Character/ABCharacterBase.h"
 #include "ABCharacterControlData.h"
@@ -19,7 +19,7 @@
 
 #include "Components/SkeletalMeshComponent.h"
 
-// ·Î±× Ä«Å×°í¸® Á¤ÀÇ.
+// ë¡œê·¸ ì¹´í…Œê³ ë¦¬ ì •ì˜.
 DEFINE_LOG_CATEGORY(LogABCharacter);
 
 // Sets default values
@@ -28,36 +28,36 @@ AABCharacterBase::AABCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// ÄÁÆ®·Ñ·¯ÀÇ È¸ÀüÀ» ¹Ş¾Æ¼­ ¼³Á¤ÇÏ´Â ¸ğµå¸¦ ¸ğµÎ ÇØÁ¦.
+	// ì»¨íŠ¸ë¡¤ëŸ¬ì˜ íšŒì „ì„ ë°›ì•„ì„œ ì„¤ì •í•˜ëŠ” ëª¨ë“œë¥¼ ëª¨ë‘ í•´ì œ.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// ¹«ºê¸ÕÆ® ¼³Á¤.
+	// ë¬´ë¸Œë¨¼íŠ¸ ì„¤ì •.
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
 
-	// ÄÄÆ÷³ÍÆ® ¼³Á¤.
+	// ì»´í¬ë„ŒíŠ¸ ì„¤ì •.
 	GetCapsuleComponent()->SetCapsuleHalfHeight(88.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_ABCAPSULE);
 
-	// ¸Ş½ÃÀÇ Äİ¸®ÀüÀº NoCollision ¼³Á¤(ÁÖ·Î ·¢µ¹¿¡ »ç¿ëµÊ).
+	// ë©”ì‹œì˜ ì½œë¦¬ì „ì€ NoCollision ì„¤ì •(ì£¼ë¡œ ë™ëŒì— ì‚¬ìš©ë¨).
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 
-	// ¸®¼Ò½º ¼³Á¤.
-	// Mesh ¼³Á¤. 
+	// ë¦¬ì†ŒìŠ¤ ì„¤ì •.
+	// Mesh ì„¤ì •. 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Cardboard.SK_CharM_Cardboard"));
 	if (CharacterMesh.Object)
 	{
-		// Mesh¿¡ Á¢±ÙÇØ¼­ ¼³Á¤ÇÏ´Â ¹æ¹ı.
+		// Meshì— ì ‘ê·¼í•´ì„œ ì„¤ì •í•˜ëŠ” ë°©ë²•.
 		GetMesh()->SetSkeletalMesh(CharacterMesh.Object);
 	}
 
-	// Animation Blueprint ¼³Á¤.
-	// Class´Ï±î _C Ãß°¡.
-	static ConstructorHelpers::FClassFinder<UAnimInstance> CharacterAnim(TEXT("/Game/ArenaBattle/Animation/ABP_ABCharacter.ABP_ABCharacter"));
+	// Animation Blueprint ì„¤ì •.
+	// Classë‹ˆê¹Œ _C ì¶”ê°€.
+	static ConstructorHelpers::FClassFinder<UAnimInstance> CharacterAnim(TEXT("/Game/ArenaBattle/Animation/ABP_ABCharacter.ABP_ABCharacter_C"));
 	if (CharacterAnim.Class)
 	{
 		GetMesh()->SetAnimClass(CharacterAnim.Class);
@@ -75,21 +75,21 @@ AABCharacterBase::AABCharacterBase()
 		CharacterControlManager.Add(ECharacterControlType::Quarter, QuarterDataRef.Object);
 	}
 
-	// ÄŞº¸ ¾×¼Ç ¸ùÅ¸ÁÖ ¾Ö¼Â ¼³Á¤.
+	// ì½¤ë³´ ì•¡ì…˜ ëª½íƒ€ì£¼ ì• ì…‹ ì„¤ì •.
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Game/ArenaBattle/Animation/AM_ComboAttack.AM_ComboAttack"));
 	if (ComboActionMontageRef.Object)
 	{
 		ComboActionMontage = ComboActionMontageRef.Object;
 	}
 
-	// ÄŞº¸ ¾×¼Ç µ¥ÀÌÅÍ ¾Ö¼Â ¼³Á¤.
+	// ì½¤ë³´ ì•¡ì…˜ ë°ì´í„° ì• ì…‹ ì„¤ì •.
 	static ConstructorHelpers::FObjectFinder<UABComboActionData> ComboActionDataRef(TEXT("/Game/ArenaBattle/ComboAction/ABA_ComboAction.ABA_ComboAction"));
 	if (ComboActionDataRef.Object)
 	{
 		ComboActionData = ComboActionDataRef.Object;
 	}
 
-	// Á×À½ ¸ùÅ¸ÁÖ ¾Ö¼Â ¼³Á¤.
+	// ì£½ìŒ ëª½íƒ€ì£¼ ì• ì…‹ ì„¤ì •.
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Game/ArenaBattle/Animation/AM_Dead.AM_Dead"));
 	if (DeadMontageRef.Object)
 	{
@@ -103,25 +103,25 @@ AABCharacterBase::AABCharacterBase()
 	// Widget Component.
 	HpBar = CreateDefaultSubobject<UABWidgetComponent>(TEXT("Widget"));
 
-	// ÄÄÆ÷³ÍÆ® °èÃş ¼³Á¤ ¹× »ó´ëÀû À§Ä¡ ¼³Á¤.
+	// ì»´í¬ë„ŒíŠ¸ ê³„ì¸µ ì„¤ì • ë° ìƒëŒ€ì  ìœ„ì¹˜ ì„¤ì •.
 	HpBar->SetupAttachment(GetMesh());
 	HpBar->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
 	
 
-	// »ç¿ëÇÒ À§Á¬ Å¬·¡½º Á¤º¸ ¼³Á¤.
+	// ì‚¬ìš©í•  ìœ„ì ¯ í´ë˜ìŠ¤ ì •ë³´ ì„¤ì •.
 	static ConstructorHelpers::FClassFinder<UUserWidget> HpBarWidgetRef(TEXT("/Game/ArenaBattle/UI/WBP_HpBar.WBP_HpBar_C"));
 	if (HpBarWidgetRef.Class)
 	{
-		// À§Á¬ ÄÄÆ÷³ÍÆ®´Â À§Á¬ÀÇ Å¬·¡½º Á¤º¸¸¦ ¹ÙÅÁÀ¸·Î ÀÚÃ¼ÀûÀ¸·Î ÀÎ½ºÅÏ½º¸¦ »ı¼ºÇÔ.
+		// ìœ„ì ¯ ì»´í¬ë„ŒíŠ¸ëŠ” ìœ„ì ¯ì˜ í´ë˜ìŠ¤ ì •ë³´ë¥¼ ë°”íƒ•ìœ¼ë¡œ ìì²´ì ìœ¼ë¡œ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ìƒì„±í•¨.
 		HpBar->SetWidgetClass(HpBarWidgetRef.Class);
 
-		// 2D ¸ğµå·Î ±×¸®±â.
+		// 2D ëª¨ë“œë¡œ ê·¸ë¦¬ê¸°.
 		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
 
-		// Å©±â ¼³Á¤.
+		// í¬ê¸° ì„¤ì •.
 		HpBar->SetDrawSize(FVector2D(150.0f, 15.0f));
 
-		// Äİ¸®Àü ²ô±â.
+		// ì½œë¦¬ì „ ë„ê¸°.
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
@@ -130,9 +130,9 @@ AABCharacterBase::AABCharacterBase()
 	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion)));
 	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll)));
 
-	// ¹«±â¸¦ º¸¿©ÁÙ ÄÄÆ÷³ÍÆ® »ı¼º.
+	// ë¬´ê¸°ë¥¼ ë³´ì—¬ì¤„ ì»´í¬ë„ŒíŠ¸ ìƒì„±.
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
-	// ¸Ş½Ã ÄÄÆ÷³ÍÆ® ÇÏÀ§·Î °èÃşÀ» ¼³Á¤ÇÏ°í, ÀÌ‹š hand_rSocket ¼ÒÄÏ¿¡ ºÎÂø.
+	// ë©”ì‹œ ì»´í¬ë„ŒíŠ¸ í•˜ìœ„ë¡œ ê³„ì¸µì„ ì„¤ì •í•˜ê³ , ì´ë–„ hand_rSocket ì†Œì¼“ì— ë¶€ì°©.
 	Weapon->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 
 }
@@ -151,68 +151,68 @@ void AABCharacterBase::SetCharacterControlData(const UABCharacterControlData* In
 
 void AABCharacterBase::SetupCharacterWidget(UUserWidget* InUserWidget)
 {
-	// ÇÊ¿äÇÑ À§Á¬ Á¤º¸ °¡Á®¿À±â.
+	// í•„ìš”í•œ ìœ„ì ¯ ì •ë³´ ê°€ì ¸ì˜¤ê¸°.
 	UABHpBarWidget* HpBarWidget = Cast<UABHpBarWidget>(InUserWidget);
 	if (HpBarWidget)
 	{
-		// ÃÖ´ë Ã¼·Â °ª ¼³Á¤.
+		// ìµœëŒ€ ì²´ë ¥ ê°’ ì„¤ì •.
 		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
-		// HP ÆÛ¼¾Æ®°¡ Á¦´ë·Î °è»ê µÇµµ·Ï ÇöÀç Ã¼·Â ¼³Á¤.
+		// HP í¼ì„¼íŠ¸ê°€ ì œëŒ€ë¡œ ê³„ì‚° ë˜ë„ë¡ í˜„ì¬ ì²´ë ¥ ì„¤ì •.
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
-		// Ã¼·Â º¯°æ ÀÌº¥Æ®(µ¨¸®°ÔÀÌÆ®)¿¡ ÇÔ¼ö ¹× °´Ã¼ Á¤º¸ µî·Ï.
+		// ì²´ë ¥ ë³€ê²½ ì´ë²¤íŠ¸(ë¸ë¦¬ê²Œì´íŠ¸)ì— í•¨ìˆ˜ ë° ê°ì²´ ì •ë³´ ë“±ë¡.
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UABHpBarWidget::UpdateHpBar);
 	}
 }
 
 void AABCharacterBase::AttackHitCheck()
 {
-	// °ø°İ ÆÇÁ¤ ÁøÇà.
+	// ê³µê²© íŒì • ì§„í–‰.
 	//UE_LOG(LogTemp, Log, TEXT("AttackHitCheck !!"));
 
-	// Ãæµ¹ ½ÃÀÛ ÁöÁ¡ °è»ê.
-	// Ä³¸¯ÅÍ ¸öÅë¿¡¼­ ¾à°£ ¾ÕÀ¸·Î(Ä¸½¶ÀÇ ¹İÁö¸§ ¸¸Å­) ¼³Á¤.
+	// ì¶©ëŒ ì‹œì‘ ì§€ì  ê³„ì‚°.
+	// ìºë¦­í„° ëª¸í†µì—ì„œ ì•½ê°„ ì•ìœ¼ë¡œ(ìº¡ìŠì˜ ë°˜ì§€ë¦„ ë§Œí¼) ì„¤ì •.
 	FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 
-	// °ø°İ °Å¸®.
+	// ê³µê²© ê±°ë¦¬.
 	const float AttackRange = 200.0f;
 	FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	// SCENE_QUERY_STAT: ¾ğ¸®¾ó¿¡¼­ Áö¿øÇÏ´Â ºĞ¼® Åø¿¡ ÅÂ±×¸¦ Ãß°¡.
-	// µÎ¹øÂ° ÀÎÀÚ: º¹ÀâÇÑ ÇüÅÂÀÇ Ãæµ¹Ã¼¸¦ °¨ÁöÇÒ Áö ¿©ºÎ.
-	// ¼¼¹øÂ° ÀÎÀÚ: ¹«½ÃÇÒ ¾×ÅÍ ¸ñ·Ï.
+	// SCENE_QUERY_STAT: ì–¸ë¦¬ì–¼ì—ì„œ ì§€ì›í•˜ëŠ” ë¶„ì„ íˆ´ì— íƒœê·¸ë¥¼ ì¶”ê°€.
+	// ë‘ë²ˆì§¸ ì¸ì: ë³µì¡í•œ í˜•íƒœì˜ ì¶©ëŒì²´ë¥¼ ê°ì§€í•  ì§€ ì—¬ë¶€.
+	// ì„¸ë²ˆì§¸ ì¸ì: ë¬´ì‹œí•  ì•¡í„° ëª©ë¡.
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
-	// Æ®·¹ÀÌ½º¿¡ »ç¿ëÇÒ ±¸Ã¼ÀÇ ¹İÁö¸§.
+	// íŠ¸ë ˆì´ìŠ¤ì— ì‚¬ìš©í•  êµ¬ì²´ì˜ ë°˜ì§€ë¦„.
 	const float AttackRadius = 50.0f;
 
-	// Æ®·¹ÀÌ½º¸¦ È°¿ëÇØ Ãæµ¹ °Ë»ç.
+	// íŠ¸ë ˆì´ìŠ¤ë¥¼ í™œìš©í•´ ì¶©ëŒ ê²€ì‚¬.
 	FHitResult OutHitResult;
 	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_ABACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 
-	// Ãæµ¹ °¨ÁöµÈ °æ¿ìÀÇ Ã³¸®.
+	// ì¶©ëŒ ê°ì§€ëœ ê²½ìš°ì˜ ì²˜ë¦¬.
 	if (HitDetected)
 	{
-		// µ¥¹ÌÁö ¾ç.
+		// ë°ë¯¸ì§€ ì–‘.
 		const float AttackDamage = 30.0f;
 
-		// µ¥¹ÌÁö ÀÌº¥Æ®.
+		// ë°ë¯¸ì§€ ì´ë²¤íŠ¸.
 		FDamageEvent DamageEvent;
 
-		// µ¥¹ÌÁö Àü´Ş.
+		// ë°ë¯¸ì§€ ì „ë‹¬.
 		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 	}
 
-	// Ãæµ¹ µğ¹ö±×(½Ã°¢ÀûÀ¸·Î È®ÀÎÇÒ ¼ö ÀÖµµ·Ï).
+	// ì¶©ëŒ ë””ë²„ê·¸(ì‹œê°ì ìœ¼ë¡œ í™•ì¸í•  ìˆ˜ ìˆë„ë¡).
 #if ENABLE_DRAW_DEBUG
 
-	// Ä¸½¶ÀÇ Áß½É À§Ä¡.
+	// ìº¡ìŠì˜ ì¤‘ì‹¬ ìœ„ì¹˜.
 	//FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
 	FVector CapsuleOrigin = (End + Start) * 0.5f;
 
-	// Ä¸½¶ ³ôÀÌ Àı¹İ °ª.
+	// ìº¡ìŠ ë†’ì´ ì ˆë°˜ ê°’.
 	float CapsuleHalfHeight = AttackRange * 0.5f;
 
-	// Ç¥½ÃÇÒ »ö»ó(¾È ¸Â¾ÒÀ¸¸é »¡°­, ¸Â¾ÒÀ¸¸é ÃÊ·Ï).
+	// í‘œì‹œí•  ìƒ‰ìƒ(ì•ˆ ë§ì•˜ìœ¼ë©´ ë¹¨ê°•, ë§ì•˜ìœ¼ë©´ ì´ˆë¡).
 	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
 	//FMath::RandRange
 	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.0f);
@@ -225,10 +225,10 @@ float AABCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	// @Task: ¸ÂÀ¸¸é ¹Ù·Î Á×µµ·Ï Ã³¸®.
+	// @Task: ë§ìœ¼ë©´ ë°”ë¡œ ì£½ë„ë¡ ì²˜ë¦¬.
 	//SetDead();
 
-	// ½ºÅÈ Á¤º¸°¡ ¾÷µ¥ÀÌÆ® µÇµµ·Ï µ¥¹ÌÁö Àü´Ş.
+	// ìŠ¤íƒ¯ ì •ë³´ê°€ ì—…ë°ì´íŠ¸ ë˜ë„ë¡ ë°ë¯¸ì§€ ì „ë‹¬.
 	Stat->ApplyDamage(DamageAmount);
 
 	return DamageAmount;
@@ -238,24 +238,24 @@ void AABCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	// Á×¾úÀ» ¶§ ¹ßÇàµÇ´Â ÀÌº¥Æ®¿¡ SetDead ÇÔ¼ö µî·Ï.
+	// ì£½ì—ˆì„ ë•Œ ë°œí–‰ë˜ëŠ” ì´ë²¤íŠ¸ì— SetDead í•¨ìˆ˜ ë“±ë¡.
 	Stat->OnHpZero.AddUObject(this, &AABCharacterBase::SetDead);
 }
 
 void AABCharacterBase::ProcessComboCommand()
 {
-	// ÇöÀç Àç»ı ÁßÀÎ ÄŞº¸ È®ÀÎ.
+	// í˜„ì¬ ì¬ìƒ ì¤‘ì¸ ì½¤ë³´ í™•ì¸.
 	if (CurrentCombo == 0)
 	{
-		// ÄŞº¸ ¾×¼Ç ½ÃÀÛ Ã³¸®ÈÄ Á¾·á.
+		// ì½¤ë³´ ì•¡ì…˜ ì‹œì‘ ì²˜ë¦¬í›„ ì¢…ë£Œ.
 		ComboActionBegin();
 		return;
 	}
 
-	// ÄŞº¸°¡ ÁøÇàÁßÀÏ ¶§´Â ÇØ´ç ÇÁ·¹¹Ö¿¡ ¸Â´Â Å¸ÀÌ¸Ó¸¦ È°¿ë.
-	// ÄŞº¸ Å¸ÀÌ¸Ó ÇÚµéÀÌ À¯È¿ÇÏÁö ¾Ê´Ù¸é,
-	// ÀÌ¹Ì ÄŞº¸ ¹ßµ¿ÀÌ °É·È°Å³ª Å¸ÀÌ¹ÖÀ» ³õÄ£ °æ¿ì.
-	// ÀÌ ¶§´Â ÄŞº¸ Ã³¸®°¡ ÇÊ¿äÇÏÁö ¾ÊÀ½.
+	// ì½¤ë³´ê°€ ì§„í–‰ì¤‘ì¼ ë•ŒëŠ” í•´ë‹¹ í”„ë ˆë°ì— ë§ëŠ” íƒ€ì´ë¨¸ë¥¼ í™œìš©.
+	// ì½¤ë³´ íƒ€ì´ë¨¸ í•¸ë“¤ì´ ìœ íš¨í•˜ì§€ ì•Šë‹¤ë©´,
+	// ì´ë¯¸ ì½¤ë³´ ë°œë™ì´ ê±¸ë ¸ê±°ë‚˜ íƒ€ì´ë°ì„ ë†“ì¹œ ê²½ìš°.
+	// ì´ ë•ŒëŠ” ì½¤ë³´ ì²˜ë¦¬ê°€ í•„ìš”í•˜ì§€ ì•ŠìŒ.
 	if (!ComboTimerHandle.IsValid())
 	{
 		HasNextComboCommand = false;
@@ -268,26 +268,26 @@ void AABCharacterBase::ProcessComboCommand()
 
 void AABCharacterBase::ComboActionBegin()
 {
-	// ÄŞº¸ »óÅÂ¸¦ 1·Î ¼³Á¤.
+	// ì½¤ë³´ ìƒíƒœë¥¼ 1ë¡œ ì„¤ì •.
 	CurrentCombo = 1;
 
-	// ÀÌµ¿ ºñÈ°¼ºÈ­.
+	// ì´ë™ ë¹„í™œì„±í™”.
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
-	// ¸ùÅ¸ÁÖ Àç»ı.
+	// ëª½íƒ€ì£¼ ì¬ìƒ.
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 	{
 		const float AttackSpeedRate = 1.0f;
 		AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
 
-		// ¸ùÅ¸ÁÖ Àç»ıÀÌ ½ÃÀÛµÇ¸é, Àç»ıÀÌ Á¾·áµÉ ¶§ È£ÃâµÇ´Â µ¨¸®°ÔÀÌÆ®¿¡ µî·Ï.
+		// ëª½íƒ€ì£¼ ì¬ìƒì´ ì‹œì‘ë˜ë©´, ì¬ìƒì´ ì¢…ë£Œë  ë•Œ í˜¸ì¶œë˜ëŠ” ë¸ë¦¬ê²Œì´íŠ¸ì— ë“±ë¡.
 		FOnMontageEnded EndDelegate;
 		EndDelegate.BindUObject(this, &AABCharacterBase::ComboActionEnd);
 		AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboActionMontage);
 
-		// ComboActionBeginÇÔ¼ö.
-		// ÄŞº¸ È®ÀÎÀ» À§ÇÑ Å¸ÀÌ¸Ó ¼³Á¤.
+		// ComboActionBeginí•¨ìˆ˜.
+		// ì½¤ë³´ í™•ì¸ì„ ìœ„í•œ íƒ€ì´ë¨¸ ì„¤ì •.
 		ComboTimerHandle.Invalidate();
 		SetComboCheckTimer();
 	}
@@ -296,37 +296,37 @@ void AABCharacterBase::ComboActionBegin()
 
 void AABCharacterBase::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	// À¯È¿¼º °Ë»ç.
+	// ìœ íš¨ì„± ê²€ì‚¬.
 	ensure(CurrentCombo != 0);
 
-	// ÄŞº¸ ÃÊ±âÈ­.
+	// ì½¤ë³´ ì´ˆê¸°í™”.
 	CurrentCombo = 0;
 
-	// Ä³¸¯ÅÍ ¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ® ¸ğµå º¹±¸.
+	// ìºë¦­í„° ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ ëª¨ë“œ ë³µêµ¬.
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void AABCharacterBase::SetComboCheckTimer()
 {
-	// ÇöÀç Àç»ıÁßÀÎ ÄŞº¸ÀÇ ÀÎµ¦½º.
+	// í˜„ì¬ ì¬ìƒì¤‘ì¸ ì½¤ë³´ì˜ ì¸ë±ìŠ¤.
 	int32 ComboIndex = CurrentCombo - 1;
 
-	// ÄŞº¸ ÀÎµ¦½º °ª °ËÁõ.
+	// ì½¤ë³´ ì¸ë±ìŠ¤ ê°’ ê²€ì¦.
 	ensure(ComboActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 
-	// ÄŞº¸ ½Ã°£ °è»ê(È®ÀÎ).
+	// ì½¤ë³´ ì‹œê°„ ê³„ì‚°(í™•ì¸).
 	const float AttackSpeedRate = 1.0f;
 	float ComboEffectiveTime = (ComboActionData->EffectiveFrameCount[ComboIndex] / ComboActionData->FrameRate) / AttackSpeedRate;
 
-	// Å¸ÀÌ¸Ó ¼³Á¤.
+	// íƒ€ì´ë¨¸ ì„¤ì •.
 	if (ComboEffectiveTime > 0.0f)
 	{
-		// Å¸ÀÌ¸Ó ¼³Á¤.
-		// Ã¹¹øÂ°: ¼³Á¤ÇÒ Å¸ÀÌ¸Ó ÇÚµé.
-		// µÎ¹øÂ°: Å¸ÀÌ¸Ó¿¡ ¼³Á¤ÇÑ ½Ã°£ÀÌ ¸ğµÎ Áö³µÀ» ¶§ ½ÇÇàµÉ ÇÔ¼öÀÇ ÁÖÀÎ.
-		// ¼¼¹øÂ°: Å¸ÀÌ¸Ó¿¡ ¿¬µ¿ÇØ ½ÇÇàÇÒ ÇÔ¼ö Æ÷ÀÎÅÍ.
-		// ³×¹øÂ°: Å¸ÀÌ¸Ó ½Ã°£.
-		// ´Ù¼¸¹øÂ°: ¹İº¹¿©ºÎ.
+		// íƒ€ì´ë¨¸ ì„¤ì •.
+		// ì²«ë²ˆì§¸: ì„¤ì •í•  íƒ€ì´ë¨¸ í•¸ë“¤.
+		// ë‘ë²ˆì§¸: íƒ€ì´ë¨¸ì— ì„¤ì •í•œ ì‹œê°„ì´ ëª¨ë‘ ì§€ë‚¬ì„ ë•Œ ì‹¤í–‰ë  í•¨ìˆ˜ì˜ ì£¼ì¸.
+		// ì„¸ë²ˆì§¸: íƒ€ì´ë¨¸ì— ì—°ë™í•´ ì‹¤í–‰í•  í•¨ìˆ˜ í¬ì¸í„°.
+		// ë„¤ë²ˆì§¸: íƒ€ì´ë¨¸ ì‹œê°„.
+		// ë‹¤ì„¯ë²ˆì§¸: ë°˜ë³µì—¬ë¶€.
 		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &AABCharacterBase::ComboCheck, ComboEffectiveTime, false);
 	}
 
@@ -334,29 +334,29 @@ void AABCharacterBase::SetComboCheckTimer()
 
 void AABCharacterBase::ComboCheck()
 {
-	// Å¸ÀÌ¸Ó ÇÚµé ¹«È¿È­(ÃÊ±âÈ­).
+	// íƒ€ì´ë¨¸ í•¸ë“¤ ë¬´íš¨í™”(ì´ˆê¸°í™”).
 	ComboTimerHandle.Invalidate();
 
-	// ÀÌÀü¿¡ °ø°İ ÀÔ·ÂÀÌ µé¾î¿Ô´ÂÁö È®ÀÎ.
+	// ì´ì „ì— ê³µê²© ì…ë ¥ì´ ë“¤ì–´ì™”ëŠ”ì§€ í™•ì¸.
 	if (HasNextComboCommand)
 	{
-		// ¸ùÅ¸ÁÖ Á¡ÇÁ Ã³¸®.
+		// ëª½íƒ€ì£¼ ì í”„ ì²˜ë¦¬.
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance)
 		{
-			// ´ÙÀ½ ÄŞº¸ ÀÎµ¦½º ¼³Á¤.
+			// ë‹¤ìŒ ì½¤ë³´ ì¸ë±ìŠ¤ ì„¤ì •.
 			CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, ComboActionData->MaxComboCount);
 
-			// Á¡ÇÁÇÒ ¼½¼ÇÀÇ ÀÌ¸§ ¼³Á¤(¿¹: ComboAttack2).
+			// ì í”„í•  ì„¹ì…˜ì˜ ì´ë¦„ ì„¤ì •(ì˜ˆ: ComboAttack2).
 			FName NextSection = *FString::Printf(TEXT("%s%d"), *ComboActionData->MontageSectionNamePrefix, CurrentCombo);
 
-			// ¼½¼Ç Á¡ÇÁ.
+			// ì„¹ì…˜ ì í”„.
 			AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
 
-			// ´ÙÀ½ ÄŞº¸ °ø°İÀ» À§ÇÑ Å¸ÀÌ¸Ó ¼³Á¤.
+			// ë‹¤ìŒ ì½¤ë³´ ê³µê²©ì„ ìœ„í•œ íƒ€ì´ë¨¸ ì„¤ì •.
 			SetComboCheckTimer();
 
-			// ÄŞº¸ °ø°İ ÀÔ·Â ÇÃ·¡±× ÃÊ±âÈ­.
+			// ì½¤ë³´ ê³µê²© ì…ë ¥ í”Œë˜ê·¸ ì´ˆê¸°í™”.
 			HasNextComboCommand = false;
 		}
 	}
@@ -364,29 +364,29 @@ void AABCharacterBase::ComboCheck()
 
 void AABCharacterBase::SetDead()
 {
-	// ¹«ºê¸ÕÆ® 
+	// ë¬´ë¸Œë¨¼íŠ¸ 
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
-	// Äİ¸®Àü ²ô±â.
+	// ì½œë¦¬ì „ ë„ê¸°.
 	SetActorEnableCollision(false);
 
-	// Á×´Â ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı.
+	// ì£½ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ.
 	PlayDeadAnimation();
 
-	// Á×¾úÀ» ¶§ HpBar(À§Á¬) »ç¶óÁöµµ·Ï Ã³¸®.
+	// ì£½ì—ˆì„ ë•Œ HpBar(ìœ„ì ¯) ì‚¬ë¼ì§€ë„ë¡ ì²˜ë¦¬.
 	HpBar->SetHiddenInGame(true);
 }
 
 void AABCharacterBase::PlayDeadAnimation()
 {
-	// ¸ùÅ¸ÁÖ Àç»ı.
+	// ëª½íƒ€ì£¼ ì¬ìƒ.
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 	{
-		// ÀÌ¹Ì Àç»ıÁßÀÎ ¸ùÅ¸ÁÖ°¡ ÀÖ´Ù¸é, ¸ğµÎ Á¾·á.
+		// ì´ë¯¸ ì¬ìƒì¤‘ì¸ ëª½íƒ€ì£¼ê°€ ìˆë‹¤ë©´, ëª¨ë‘ ì¢…ë£Œ.
 		AnimInstance->StopAllMontages(0.0f);
 
-		// Á×À½ ¸ùÅ¸ÁÖ Àç»ı.
+		// ì£½ìŒ ëª½íƒ€ì£¼ ì¬ìƒ.
 		const float PlayRate = 1.0f;
 		AnimInstance->Montage_Play(DeadMontage, PlayRate);
 	}
@@ -394,7 +394,7 @@ void AABCharacterBase::PlayDeadAnimation()
 
 void AABCharacterBase::TakeItem(UABItemData* InItemData)
 {
-	// ¾ÆÀÌÅÛ Á¤º¸°¡ ³Ñ¾î¿À¸é Ã³¸®.
+	// ì•„ì´í…œ ì •ë³´ê°€ ë„˜ì–´ì˜¤ë©´ ì²˜ë¦¬.
 	if (InItemData)
 	{
 		TakeItemActions[(uint8)InItemData->Type].ItemDelegate.ExecuteIfBound(InItemData);
@@ -409,18 +409,18 @@ void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
 void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 {
 	//UE_LOG(LogABCharacter, Log, TEXT("Equip Weapon."));
-	// ÇÔ¼ö¿¡ Àü´ŞµÈ ¾ÆÀÌÅÛ µ¥ÀÌÅÍ ¾Ö¼ÂÀ» ¹«±â µ¥ÀÌÅÍ·Î º¯È¯.
+	// í•¨ìˆ˜ì— ì „ë‹¬ëœ ì•„ì´í…œ ë°ì´í„° ì• ì…‹ì„ ë¬´ê¸° ë°ì´í„°ë¡œ ë³€í™˜.
 	UABWeaponItemData* WeaponItemData = Cast<UABWeaponItemData>(InItemData);
-	// º¯È¯¿¡ ¼º°ïÇÏ¸é
+	// ë³€í™˜ì— ì„±ê³¤í•˜ë©´
 	if (WeaponItemData)
 	{
-		// ¹«±â ¸Ş½Ã°¡ ¾ÆÁ÷ ·Îµù ¾ÈµÈ °æ¿ì, ·Îµå Ã³¸®.
+		// ë¬´ê¸° ë©”ì‹œê°€ ì•„ì§ ë¡œë”© ì•ˆëœ ê²½ìš°, ë¡œë“œ ì²˜ë¦¬.
 		if (WeaponItemData->WeaponMesh.IsPending())
 		{
 			WeaponItemData->WeaponMesh.LoadSynchronous();
 		}
 
-		// ¹«±â ÄÄÆ÷³ÍÆ®¿¡ ·Îµå°¡ ¿Ï·áµÈ ½ºÄÌ·¹Å» ¸Ş½Ã ¼³Á¤.
+		// ë¬´ê¸° ì»´í¬ë„ŒíŠ¸ì— ë¡œë“œê°€ ì™„ë£Œëœ ìŠ¤ì¼ˆë ˆíƒˆ ë©”ì‹œ ì„¤ì •.
 		Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
 	}
 }

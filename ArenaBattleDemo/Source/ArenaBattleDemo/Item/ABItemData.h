@@ -29,5 +29,4 @@ public:
 	// 아이템 타입을 지정하는 열거형 변수.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Type)
 	EItemType Type;
-	
 };
