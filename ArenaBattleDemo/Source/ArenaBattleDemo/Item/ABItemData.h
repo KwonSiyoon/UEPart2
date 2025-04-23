@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,8 +6,8 @@
 #include "Engine/DataAsset.h"
 #include "ABItemData.generated.h"
 
-// ¾ÆÀÌÅÛ Á¾·ù ¿­°ÅÇü.
-// ºí·çÇÁ¸°Æ®¿Í È£È¯µÇµµ·Ï BlueprintType ÁöÁ¤.
+// ì•„ì´í…œ ì¢…ë¥˜ ì—´ê±°í˜•.
+// ë¸”ë£¨í”„ë¦°íŠ¸ì™€ í˜¸í™˜ë˜ë„ë¡ BlueprintType ì§€ì •.
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
@@ -26,7 +26,18 @@ class ARENABATTLEDEMO_API UABItemData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	// ¾ÆÀÌÅÛ Å¸ÀÔÀ» ÁöÁ¤ÇÏ´Â ¿­°ÅÇü º¯¼ö.
+	// FPrimaryAssetId ê°’ì„ ë°˜í™˜í•˜ëŠ” GetPrimaryAssetId í•¨ìˆ˜ ì˜¤ë²„ë¼ì´ë“œ.
+	// ì²«ë²ˆì§¸ ì¸ì: íƒœê·¸ ê°’.
+	// ë‘ë²ˆì§¸ ì¸ì: ì´ë¦„ ê°’. ì¼ë°˜ì ìœ¼ë¡œ GetFName()ì„ ë§ì´ í™œìš©í•¨.
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("ABItemData", GetFName());
+	}
+
+public:
+	// ì•„ì´í…œ íƒ€ì…ì„ ì§€ì •í•˜ëŠ” ì—´ê±°í˜• ë³€ìˆ˜.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Type)
 	EItemType Type;
+
+
 };

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,10 +15,17 @@ public:
 	// Sets default values for this actor's properties
 	AABItemBox();
 
+	// Getter.
+	FORCEINLINE class UBoxComponent* GetTrigger() const { return Trigger; }
+
 protected:
-	// ¹Ú½º ÄÄÆ÷³ÍÆ®ÀÇ ¿À¹ö·¦ µ¨¸®°ÔÀÌÆ®¿¡ µî·ÏÇÒ ÇÔ¼ö.
-	// OnComponentBeginOverlap µ¨¸®°ÔÀÌÆ®´Â ´ÙÀÌ³ª¹ÍÀ¸·Î ÁöÁ¤µÇ¾î ÀÖ±â ¶§¹®¿¡
-	// UFUNCTION ¸ÅÅ©·Î¸¦ ÁöÁ¤ÇØ¾ß ÇÔ.
+	virtual void PostInitializeComponents() override;
+
+
+protected:
+	// ë°•ìŠ¤ ì»´í¬ë„ŒíŠ¸ì˜ ì˜¤ë²„ë© ë¸ë¦¬ê²Œì´íŠ¸ì— ë“±ë¡í•  í•¨ìˆ˜.
+	// OnComponentBeginOverlap ë¸ë¦¬ê²Œì´íŠ¸ëŠ” ë‹¤ì´ë‚˜ë¯¹ìœ¼ë¡œ ì§€ì •ë˜ì–´ ìˆê¸° ë•Œë¬¸ì—
+	// UFUNCTION ë§¤í¬ë¡œë¥¼ ì§€ì •í•´ì•¼ í•¨.
 	UFUNCTION()
 	void OnOverlapBegin(
 		UPrimitiveComponent* OverlappedComponent,
@@ -29,25 +36,25 @@ protected:
 		const FHitResult& SweepResult
 	);
 
-	// ÆÄÆ¼Å¬ Àç»ı Á¾·á ½Ã ¹ßÇàµÇ´Â µ¨¸®°ÔÀÌÆ®¿¡ µî·ÏÇÒ ÇÔ¼ö.
+	// íŒŒí‹°í´ ì¬ìƒ ì¢…ë£Œ ì‹œ ë°œí–‰ë˜ëŠ” ë¸ë¦¬ê²Œì´íŠ¸ì— ë“±ë¡í•  í•¨ìˆ˜.
 	UFUNCTION()
 	void OnEffectFinished(class UParticleSystemComponent* PSystem);
 
 
 protected:
-	// ¾×ÅÍÀÇ Ãæµ¹À» ´ã´çÇÒ ¹Ú½º ÄÄÆ÷³ÍÆ®.
+	// ì•¡í„°ì˜ ì¶©ëŒì„ ë‹´ë‹¹í•  ë°•ìŠ¤ ì»´í¬ë„ŒíŠ¸.
 	UPROPERTY(VisibleAnywhere, Category = Box)
 	TObjectPtr<class UBoxComponent> Trigger;
 
-	// ¾ÆÀÌÅÛ ¹Ú½º¸¦ º¸¿©ÁÙ ¸Ş½Ã ÄÄÆ÷³ÍÆ®.
+	// ì•„ì´í…œ ë°•ìŠ¤ë¥¼ ë³´ì—¬ì¤„ ë©”ì‹œ ì»´í¬ë„ŒíŠ¸.
 	UPROPERTY(VisibleAnywhere, Category = Box)
 	TObjectPtr<class UStaticMeshComponent> Mesh;
 
-	// ¹Ú½º¿Í »óÈ£ÀÛ¿ëÇßÀ» ¶§ º¸¿©ÁÙ ÆÄÆ¼Å¬ È¿°ú ÄÄÆ÷³ÍÆ®.
+	// ë°•ìŠ¤ì™€ ìƒí˜¸ì‘ìš©í–ˆì„ ë•Œ ë³´ì—¬ì¤„ íŒŒí‹°í´ íš¨ê³¼ ì»´í¬ë„ŒíŠ¸.
 	UPROPERTY(VisibleAnywhere, Category = Box)
 	TObjectPtr<class UParticleSystemComponent> Effect;
 
-	// ¾ÆÀÌÅÛ Á¤º¸.
+	// ì•„ì´í…œ ì •ë³´.
 	UPROPERTY(EditAnywhere, Category = Item)
 	TObjectPtr<class UABItemData> Item;
 

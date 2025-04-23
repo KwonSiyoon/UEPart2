@@ -193,7 +193,7 @@ void AABCharacterBase::AttackHitCheck()
 	if (HitDetected)
 	{
 		// 데미지 양.
-		const float AttackDamage = 30.0f;
+		const float AttackDamage = 300.0f;
 
 		// 데미지 이벤트.
 		FDamageEvent DamageEvent;
