@@ -25,7 +25,8 @@ AABItemBox::AABItemBox()
 
 	Trigger->SetBoxExtent(FVector(40.0f, 42.0f, 30.0f));
 
-	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AABItemBox::OnOverlapBegin);
+	//// 트리거가 발생하는 다이나믹 델리게이트에 함수 등록.
+	//Trigger->OnComponentBeginOverlap.AddDynamic(this, &AABItemBox::OnOverlapBegin);
 
 	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
 
@@ -83,6 +84,9 @@ void AABItemBox::PostInitializeComponents()
 
 	// 제대로 설정됐는지 확인.
 	ensure(Item);
+
+	// 트리거가 발생하는 다이나믹 델리게이트에 함수 등록.
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AABItemBox::OnOverlapBegin);
 
 }
 

@@ -137,5 +137,21 @@ protected:  // Reward Section.
     // 보상 상자 생성 함수.
     void SpawnRewardBoxed();
 
+public: // Stat Section.
+    // CurrentStageNum에 대한 Getter/Setter.
+    FORCEINLINE int32 GetStageNum() const { return CurrentStageNum; }
+    FORCEINLINE void SetStageNum(int32 InNewStageNum)
+    {
+        CurrentStageNum = InNewStageNum;
+    }
+
+protected:  // Stage Section.
+
+    // 스테이지의 넘버를 스탯으로 관리.
+    UPROPERTY(VisibleInstanceOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
+    int32 CurrentStageNum;
+
+
+
 
 };

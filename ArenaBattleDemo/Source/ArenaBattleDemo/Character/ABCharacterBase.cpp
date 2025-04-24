@@ -156,7 +156,7 @@ void AABCharacterBase::SetupCharacterWidget(UUserWidget* InUserWidget)
 	if (HpBarWidget)
 	{
 		// 최대 체력 값 설정.
-		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
+		HpBarWidget->SetMaxHp(Stat->GetTotalStat().MaxHp);
 		// HP 퍼센트가 제대로 계산 되도록 현재 체력 설정.
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		// 체력 변경 이벤트(델리게이트)에 함수 및 객체 정보 등록.
@@ -174,7 +174,8 @@ void AABCharacterBase::AttackHitCheck()
 	FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 
 	// 공격 거리.
-	const float AttackRange = 200.0f;
+	//const float AttackRange = 200.0f;
+	const float AttackRange = Stat->GetTotalStat().AttackRange;
 	FVector End = Start + GetActorForwardVector() * AttackRange;
 
 	// SCENE_QUERY_STAT: 언리얼에서 지원하는 분석 툴에 태그를 추가.
@@ -193,7 +194,8 @@ void AABCharacterBase::AttackHitCheck()
 	if (HitDetected)
 	{
 		// 데미지 양.
-		const float AttackDamage = 300.0f;
+		//const float AttackDamage = 300.0f;
+		const float AttackDamage = Stat->GetTotalStat().Attack;
 
 		// 데미지 이벤트.
 		FDamageEvent DamageEvent;
@@ -278,7 +280,8 @@ void AABCharacterBase::ComboActionBegin()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 	{
-		const float AttackSpeedRate = 1.0f;
+		//const float AttackSpeedRate = 1.0f;
+		const float AttackSpeedRate = Stat->GetTotalStat().AttackSpeed;
 		AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
 
 		// 몽타주 재생이 시작되면, 재생이 종료될 때 호출되는 델리게이트에 등록.
@@ -315,7 +318,8 @@ void AABCharacterBase::SetComboCheckTimer()
 	ensure(ComboActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 
 	// 콤보 시간 계산(확인).
-	const float AttackSpeedRate = 1.0f;
+	//const float AttackSpeedRate = 1.0f;
+	const float AttackSpeedRate = Stat->GetTotalStat().AttackSpeed;
 	float ComboEffectiveTime = (ComboActionData->EffectiveFrameCount[ComboIndex] / ComboActionData->FrameRate) / AttackSpeedRate;
 
 	// 타이머 설정.
@@ -422,12 +426,25 @@ void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 
 		// 무기 컴포넌트에 로드가 완료된 스켈레탈 메시 설정.
 		Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
+
+		// 무기 아이템 데이터가 가지는 부가 스텟 설정.
+		Stat->SetModifierStat(WeaponItemData->ModifierStat);
 	}
 }
 
 void AABCharacterBase::ReadScroll(UABItemData* InItemData)
 {
 	UE_LOG(LogABCharacter, Log, TEXT("Read Scroll."));
+}
+
+int32 AABCharacterBase::GetLevel() const
+{
+	return Stat->GetCurrentLevel();
+}
+
+void AABCharacterBase::SetLevel(int32 InNewLevel)
+{
+	Stat->SetLevelStat(InNewLevel);
 }
 
 

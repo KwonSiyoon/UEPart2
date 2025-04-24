@@ -1,14 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CharacterStat/ABCharacterStatComponent.h"
 #include "ABCharacterStatComponent.h"
+#include "GameData/ABGameSingleton.h"
+
+
 
 // Sets default values for this component's properties
 UABCharacterStatComponent::UABCharacterStatComponent()
 {
-	MaxHp = 200.0f;
-	CurrentHp = MaxHp;
+	//MaxHp = 200.0f;
+	//CurrentHp = MaxHp;
+	CurrentLevel = 1.0f;
 }
 
 
@@ -17,30 +21,47 @@ void UABCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// °ÔÀÓÀÌ ½ÃÀÛµÇ¸é Ã¼·ÂÀ» °¡µæ Ã¤¿ì±â.
-	SetHp(MaxHp);
+	// ë ˆë²¨ ìŠ¤íƒ¯ ë°ì´í„° ì„¤ì •.
+	SetLevelStat(static_cast<int32>(CurrentLevel));
+
+	// ê²Œì„ì´ ì‹œì‘ë˜ë©´ ì²´ë ¥ì„ ê°€ë“ ì±„ìš°ê¸°.
+	SetHp(BaseStat.MaxHp);
+
+
+}
+
+void UABCharacterStatComponent::SetLevelStat(int32 InNewLevel)
+{
+	// ìœ íš¨í•œ ë ˆë²¨ ë²”ìœ„ë¡œ ê³ ì •.
+	CurrentLevel = FMath::Clamp(InNewLevel, 1, UABGameSingleton::Get().CharacterMaxLevel);
+
+	// ê²Œì„ ì‹±ê¸€í†¤ìœ¼ë¡œë¶€í„° ë ˆë²¨ ë°ì´í„° ê°€ì ¸ì˜¤ê¸°.
+	BaseStat = UABGameSingleton::Get().GetCharacterStat(CurrentLevel);
+
+	// ì„¤ì •í•œ ê°’ì— ë¬¸ì œ ì—†ëŠ”ì§€ í™•ì¸.
+	check(BaseStat.MaxHp > 0.0f);
 }
 
 float UABCharacterStatComponent::ApplyDamage(float InDamage)
 {
-	// µ¥¹ÌÁö Ã³¸®.
+	// ë°ë¯¸ì§€ ì²˜ë¦¬.
 	const float PrevHp = CurrentHp;
 
-	// µ¥¹ÌÁö º¸Á¤ °ª.
-	// ¿À·ù·Î ÀÎÇØ Àü´ŞµÈ µ¥¹ÌÁö°¡ À½¼öÀÏ ¼ö ÀÖÀ½.
-	// À½¼öÀÎ °æ¿ì´Â 0 ¼³Á¤.
+	// ë°ë¯¸ì§€ ë³´ì • ê°’.
+	// ì˜¤ë¥˜ë¡œ ì¸í•´ ì „ë‹¬ëœ ë°ë¯¸ì§€ê°€ ìŒìˆ˜ì¼ ìˆ˜ ìˆìŒ.
+	// ìŒìˆ˜ì¸ ê²½ìš°ëŠ” 0 ì„¤ì •.
 	//const float ActualDamage = FMath::Clamp<float>(InDamage, 0, InDamage);
 	const float ActualDamage = FMath::Max<float>(0.0f, InDamage);
 
 
-	// µ¥¹ÌÁö °è»ê.
+	// ë°ë¯¸ì§€ ê³„ì‚°.
 	//CurrentHp = FMath::Clamp<float>(PrevHp - ActualDamage, 0.0f, MaxHp);
 	SetHp(PrevHp - ActualDamage);
 
-	// Á×¾ú´ÂÁö (Ã¼·ÂÀ» ¸ğµÎ ¼ÒÁøÇß´ÂÁö) È®ÀÎ.
+	// ì£½ì—ˆëŠ”ì§€ (ì²´ë ¥ì„ ëª¨ë‘ ì†Œì§„í–ˆëŠ”ì§€) í™•ì¸.
 	if (CurrentHp <= KINDA_SMALL_NUMBER)
 	{
-		// ÀÌº¥Æ® ¹ßÇà.
+		// ì´ë²¤íŠ¸ ë°œí–‰.
 		OnHpZero.Broadcast();
 	}
 
@@ -49,10 +70,11 @@ float UABCharacterStatComponent::ApplyDamage(float InDamage)
 
 void UABCharacterStatComponent::SetHp(float NewHp)
 {
-	// ÇöÀç Ã¼·Â ¾÷µ¥ÀÌÆ®.
-	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, MaxHp);
+	// í˜„ì¬ ì²´ë ¥ ì—…ë°ì´íŠ¸.
+	//CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, MaxHp);
+	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, BaseStat.MaxHp);
 
-	// Ã¼·Â º¯°æ ÀÌº¥Æ® ¹ßÇà.
+	// ì²´ë ¥ ë³€ê²½ ì´ë²¤íŠ¸ ë°œí–‰.
 	OnHpChanged.Broadcast(CurrentHp);
 }
 
