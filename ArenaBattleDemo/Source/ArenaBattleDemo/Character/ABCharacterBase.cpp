@@ -184,7 +184,8 @@ void AABCharacterBase::AttackHitCheck()
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
 	// 트레이스에 사용할 구체의 반지름.
-	const float AttackRadius = 50.0f;
+	//const float AttackRadius = 50.0f;
+	const float AttackRadius = Stat->GetAttackRadius();
 
 	// 트레이스를 활용해 충돌 검사.
 	FHitResult OutHitResult;
@@ -307,6 +308,13 @@ void AABCharacterBase::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProper
 
 	// 캐릭터 무브먼트 컴포넌트 모드 복구.
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+	// 공격이 끝나면 NotifyComboActionEnd 함수 호출.
+	NotifyComboActionEnd();
+}
+
+void AABCharacterBase::NotifyComboActionEnd()
+{
 }
 
 void AABCharacterBase::SetComboCheckTimer()

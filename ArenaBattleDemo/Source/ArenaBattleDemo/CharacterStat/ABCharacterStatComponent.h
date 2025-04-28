@@ -35,6 +35,8 @@ public:		// Getter.
 	void SetLevelStat(int32 InNewLevel);
 	FORCEINLINE float GetCurrentLevel() const { return CurrentLevel; }
 
+	FORCEINLINE float GetAttackRadius() const { return AttackRadius; }
+
 	// 부가 스탯데이터 설정 함수.
 	FORCEINLINE void SetModifierStat(const FABCharacterStat& InModifierStat)
 	{
@@ -79,6 +81,13 @@ protected:	// 스탯.
 	// 현재 레벨.
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentLevel;
+
+	// 공격 범위.
+	UPROPERTY(VisibleInstanceOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
+	float AttackRadius;
+
+
+
 
 	// 캐릭터의 기본 스텟 데이터.
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
