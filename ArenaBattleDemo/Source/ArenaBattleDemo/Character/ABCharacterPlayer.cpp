@@ -12,6 +12,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "UI/ABHUDWidget.h"
+#include "CharacterStat/ABCharacterStatComponent.h"
+
 AABCharacterPlayer::AABCharacterPlayer()
 {
 	
@@ -76,19 +79,40 @@ void AABCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Controller.
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		// 입력 비활성화.
+		EnableInput(PlayerController);
+	}
+
 	// 입력 설정.
 	SetCharacterControl(CurrentCharacterControlType);
 
-	// Add InputMapping Context to Enhanced Input System.
-	// Cast와 CastChecked
-	// Cast는 확실하지 않을 때 사용. Cast 실패시 nullptr 반환.
-	// CastChecked 확실하거나 꼭 Cast 되어야 할 때 사용. Cast 실패시 Assertion되어 프로그램 break.
-	/*APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (auto SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	{
-		SubSystem->AddMappingContext(DefaultMappingContext, 0);
-	}*/
+	//// Add InputMapping Context to Enhanced Input System.
+	//// Cast와 CastChecked
+	//// Cast는 확실하지 않을 때 사용. Cast 실패시 nullptr 반환.
+	//// CastChecked 확실하거나 꼭 Cast 되어야 할 때 사용. Cast 실패시 Assertion되어 프로그램 break.
+	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	//if (auto SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+	//{
+	//	SubSystem->AddMappingContext(DefaultMappingContext, 0);
+	//}
 
+}
+
+void AABCharacterPlayer::SetDead()
+{
+	Super::SetDead();
+
+	// Controller.
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		// 입력 비활성화.
+		DisableInput(PlayerController);
+	}
 }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -214,4 +238,21 @@ void AABCharacterPlayer::Attack()
 {
 	// 공격 입력 처리 함수 호출.
 	ProcessComboCommand();
+}
+
+void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)
+{
+	// UI에 기능을 추가한 뒤에 연결
+	if (InHUDWidget)
+	{
+		// 스탯 정보를 UI에 전달.
+		InHUDWidget->UpdateStat(Stat->GetBaseStat(), Stat->GetModifierStat());
+
+		// Hp 정보 전달.
+		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
+
+		// 델리게이트에 등록.
+		Stat->OnStatChanged.AddUObject(InHUDWidget, &UABHUDWidget::UpdateStat);
+		Stat->OnHpChanged.AddUObject(InHUDWidget, &UABHUDWidget::UpdateHpBar);
+	}
 }

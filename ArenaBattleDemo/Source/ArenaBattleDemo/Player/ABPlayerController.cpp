@@ -1,15 +1,36 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 #include "Player/ABPlayerController.h"
+#include "UI/ABHUDWidget.h"
+
+
+AABPlayerController::AABPlayerController()
+{
+	// ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ ì• ì…‹ì—ì„œ í´ë˜ìŠ¤ ì •ë³´ ë¡œë“œ.
+	static ConstructorHelpers::FClassFinder<UABHUDWidget> ABHUDWidgetRef(TEXT("/Game/ArenaBattle/UI/WBP_ABHUD.WBP_ABHUD_C"));
+	if (ABHUDWidgetRef.Class)
+	{
+		ABHUDWidgetClass = ABHUDWidgetRef.Class;
+	}
+}
 
 void AABPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ½ÃÀÛÇÒ ¶§ ¸¶¿ì½º°¡ ºäÆ÷Æ®·Î ÀÔ·ÂµÇ¾î ¹Ù·Î ½ÇÇàµÇµµ·Ï ¼³Á¤.
+	// ì‹œì‘í•  ë•Œ ë§ˆìš°ìŠ¤ê°€ ë·°í¬íŠ¸ë¡œ ì…ë ¥ë˜ì–´ ë°”ë¡œ ì‹¤í–‰ë˜ë„ë¡ ì„¤ì •.
 	FInputModeGameOnly GameInput;
-	// ÀÔ·Â ¸ğµå ¼³Á¤.
-	// ±¸Á¶Ã¼¸¦ ³Ö¾îÁØ´Ù. FInputModeDataBase¸¦ »ó¼ÓÇÑ ±¸Á¶Ã¼.
+	// ì…ë ¥ ëª¨ë“œ ì„¤ì •.
+	// êµ¬ì¡°ì²´ë¥¼ ë„£ì–´ì¤€ë‹¤. FInputModeDataBaseë¥¼ ìƒì†í•œ êµ¬ì¡°ì²´.
 	SetInputMode(GameInput);
+
+	// ìœ„ì ¯ ìƒì„±.
+	ABHUDWidget = CreateWidget<UABHUDWidget>(this, ABHUDWidgetClass);
+
+	// ìœ„ì ¯ì´ ë¬¸ì œ ì—†ì´ ìƒì„± ëìœ¼ë©´,
+	if (ABHUDWidget)
+	{
+		// ìœ„ì ¯ì„ í™”ë©´ì— ì¶”ê°€í•´ UIê°€ ë³´ì¼ ìˆ˜ ìˆë„ë¡ ì„¤ì •.
+		ABHUDWidget->AddToViewport();
+	}
+
 }

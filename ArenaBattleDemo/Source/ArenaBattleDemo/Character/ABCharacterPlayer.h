@@ -1,17 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Character/ABCharacterBase.h"
 #include "InputActionValue.h"
+#include "Interface/ABCharacterHUDInterface.h"
 #include "ABCharacterPlayer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENABATTLEDEMO_API AABCharacterPlayer : public AABCharacterBase
+class ARENABATTLEDEMO_API AABCharacterPlayer : public AABCharacterBase, public IABCharacterHUDInterface
 {
 	GENERATED_BODY()
 	
@@ -19,6 +20,8 @@ public:
 	AABCharacterPlayer();
 
 	virtual void BeginPlay() override;
+
+	virtual void SetDead() override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -35,9 +38,9 @@ protected:
 
 
 protected:	// Camera Section.
-	// Category ÁöÁ¤À» ÇÒ ¶§ ¹®ÀÚ¿­·Î ÇØµµµÇ°í ±×³É ½áµµ µÈ´Ù.
+	// Category ì§€ì •ì„ í•  ë•Œ ë¬¸ìì—´ë¡œ í•´ë„ë˜ê³  ê·¸ëƒ¥ ì¨ë„ ëœë‹¤.
 	// Category = Camera // Category = "Camera"
-	// À§ 2°¡Áö µÑ´Ù ¶È°°´Ù.
+	// ìœ„ 2ê°€ì§€ ë‘˜ë‹¤ ë˜‘ê°™ë‹¤.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> SpringArm;
 
@@ -67,4 +70,8 @@ protected:	// Input Section.
 	TObjectPtr<class UInputAction> QuarterMoveAction;
 
 	ECharacterControlType CurrentCharacterControlType;
+
+protected:	// UI Section.
+	// Inherited via IABCharacterHUDInterface
+	virtual void SetupHUDWidget(UABHUDWidget* InHUDWidget) override;
 };
