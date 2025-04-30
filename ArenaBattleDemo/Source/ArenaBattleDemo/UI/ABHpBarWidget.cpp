@@ -1,44 +1,82 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/ABHpBarWidget.h"
 #include "Components/ProgressBar.h"
 #include "Interface/ABCharacterWidgetInterface.h"
+#include "Components/TextBlock.h"
 
 UABHpBarWidget::UABHpBarWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	// ÀÏºÎ·¯ À¯È¿ÇÏÁö ¾ÊÀº °ªÀ» ±¸ºĞÇÏ±â À§ÇØ °ª ¼³Á¤.
+	// ì¼ë¶€ëŸ¬ ìœ íš¨í•˜ì§€ ì•Šì€ ê°’ì„ êµ¬ë¶„í•˜ê¸° ìœ„í•´ ê°’ ì„¤ì •.
 	MaxHp = -1.0f;
 }
 
 void UABHpBarWidget::UpdateHpBar(float NewCurrentHp)
 {
-	// MaxHp °ªÀÌ Á¦´ë·Î ¼³Á¤µÆ´ÂÁö È®ÀÎ.
+	// í˜„ì¬ HP ê°’ ì—…ë°ì´íŠ¸.
+	CurrentHp = NewCurrentHp;
+
+	// MaxHp ê°’ì´ ì œëŒ€ë¡œ ì„¤ì •ëëŠ”ì§€ í™•ì¸.
 	ensure(MaxHp > 0.0f);
 
-	// ÇÁ·Î±×·¹½º ¹Ù À§Á¬ ¾÷µ¥ÀÌÆ®.
+	// í”„ë¡œê·¸ë ˆìŠ¤ ë°” ìœ„ì ¯ ì—…ë°ì´íŠ¸.
 	if (HpProgressBar)
 	{
-		HpProgressBar->SetPercent(NewCurrentHp / MaxHp);
+		HpProgressBar->SetPercent(CurrentHp / MaxHp);
 	}
+
+	// HP ìŠ¤íƒ¯ í…ìŠ¤íŠ¸ ì—…ë°ì´íŠ¸.
+	// í…ìŠ¤íŠ¸ ë¸”ë¡ì´ ìœ íš¨í•˜ë©´,
+	if (HpStat)
+	{
+		HpStat->SetText(FText::FromString(GetHpStatText()));
+	}
+}
+
+void UABHpBarWidget::UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat)
+{
+	// ìµœëŒ€ HP ê°’ ì—…ë°ì´íŠ¸.
+	MaxHp = (BaseStat + ModifierStat).MaxHp;
+
+	// í”„ë¡œê·¸ë ˆìŠ¤ë°”ê°€ ìœ íš¨í•˜ë©´,
+	if (HpProgressBar)
+	{
+		HpProgressBar->SetPercent(CurrentHp / MaxHp);
+	}
+
+	// í…ìŠ¤íŠ¸ ë¸”ë¡ì´ ìœ íš¨í•˜ë©´,
+	if (HpStat)
+	{
+		HpStat->SetText(FText::FromString(GetHpStatText()));
+	}
+
+}
+
+FString UABHpBarWidget::GetHpStatText()
+{
+	return FString::Printf(TEXT("%.0f / %.0f"), CurrentHp, MaxHp);
 }
 
 void UABHpBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// ÀÌ ÇÔ¼ö°¡ È£ÃâµÇ¸é, UI¿¡ ´ëÇÑ ´ëºÎºĞÀÇ °ªÀÌ ÃÊ±âÈ­ µÇ¾ú´Ù°í »ı°¢ÇÒ ¼ö ÀÖÀ½.
-	// À§Á¬ ÂüÁ¶ ¼³Á¤À» À§ÇØ ÀÌ¸§À¸·Î °Ì»ö.
+	// ì´ í•¨ìˆ˜ê°€ í˜¸ì¶œë˜ë©´, UIì— ëŒ€í•œ ëŒ€ë¶€ë¶„ì˜ ê°’ì´ ì´ˆê¸°í™” ë˜ì—ˆë‹¤ê³  ìƒê°í•  ìˆ˜ ìˆìŒ.
+	// ìœ„ì ¯ ì°¸ì¡° ì„¤ì •ì„ ìœ„í•´ ì´ë¦„ìœ¼ë¡œ ê²ìƒ‰.
 	HpProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PbHpBar")));
 	ensure(HpProgressBar);
 
-	// Ä³¸¯ÅÍ¿¡ ³» Á¤º¸(À§Á¬)À» Àü´Ş.
-	// °­ÂüÁ¶¸¦ ÇÇÇÏ±â À§ÇØ ÀÎÅÍÆäÀÌ½º¸¦ ÅëÇØ ¿ìÈ¸ÇØ Àü´Ş (´À½¼ÇÑ °áÇÕ).
+	HpStat = Cast<UTextBlock>(GetWidgetFromName(TEXT("TxtHpStat")));
+	ensure(HpStat);
+
+	// ìºë¦­í„°ì— ë‚´ ì •ë³´(ìœ„ì ¯)ì„ ì „ë‹¬.
+	// ê°•ì°¸ì¡°ë¥¼ í”¼í•˜ê¸° ìœ„í•´ ì¸í„°í˜ì´ìŠ¤ë¥¼ í†µí•´ ìš°íšŒí•´ ì „ë‹¬ (ëŠìŠ¨í•œ ê²°í•©).
 	IABCharacterWidgetInterface* CharacterWidget = Cast<IABCharacterWidgetInterface>(OwningActor);
 	if (CharacterWidget)
 	{
-		// ÀÎÅÍÆäÀÌ½º¸¦ ÅëÇØ Ä³¸¯ÅÍ¿¡ ³» Á¤º¸(À§Á¬) Àü´Ş.
+		// ì¸í„°í˜ì´ìŠ¤ë¥¼ í†µí•´ ìºë¦­í„°ì— ë‚´ ì •ë³´(ìœ„ì ¯) ì „ë‹¬.
 		CharacterWidget->SetupCharacterWidget(this);
 	}
 

@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "ABUserWidget.h"
+#include "GameData/ABCharacterStat.h"
 #include "ABHpBarWidget.generated.h"
 
 /**
@@ -17,22 +18,37 @@ class ARENABATTLEDEMO_API UABHpBarWidget : public UABUserWidget
 public:
 	UABHpBarWidget(const FObjectInitializer& ObjectInitializer);
 	
-	// ÃÖ´ë Ã¼·Â ¼³Á¤ ÇÔ¼ö.
-	FORCEINLINE void SetMaxHp(float NewMaxHp) { MaxHp = NewMaxHp; }
+	// ìµœëŒ€ ì²´ë ¥ ì„¤ì • í•¨ìˆ˜.
+	//FORCEINLINE void SetMaxHp(float NewMaxHp) { MaxHp = NewMaxHp; }
 
-	// HpBar¿¡ ÆÛ¼¾Æ®¸¦ Á¶Á¤ÇÒ ¶§ È£ÃâÇÒ ÇÔ¼ö.
+	// HpBarì— í¼ì„¼íŠ¸ë¥¼ ì¡°ì •í•  ë•Œ í˜¸ì¶œí•  í•¨ìˆ˜.
 	void UpdateHpBar(float NewCurrentHp);
 
+	// ìŠ¤íƒ¯ì„ ì—…ë°ì´íŠ¸í•  ë•Œ í˜¸ì¶œí•  í•¨ìˆ˜.
+	void UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat);
+
+	// CurrentHp/MaxHp í˜•íƒœë¡œ í…ìŠ¤íŠ¸ë¥¼ ìƒì„±í•˜ëŠ” í•¨ìˆ˜.
+	FString GetHpStatText();
+
 protected:
-	// UMG°¡ ÃÊ±âÈ­µÉ ¶§ È£ÃâµÇ´Â ÇÔ¼ö.
+	// UMGê°€ ì´ˆê¸°í™”ë  ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜.
 	virtual void NativeConstruct() override;
 
 protected:
-	// HP °ÔÀÌÁö¸¦ º¸¿©ÁÖ±â À§ÇØ »ç¿ëÇÒ ÇÁ·Î±×·¹½º¹Ù ÂüÁ¶ º¯¼ö.
+	// HP ê²Œì´ì§€ë¥¼ ë³´ì—¬ì£¼ê¸° ìœ„í•´ ì‚¬ìš©í•  í”„ë¡œê·¸ë ˆìŠ¤ë°” ì°¸ì¡° ë³€ìˆ˜.
 	UPROPERTY()
 	TObjectPtr<class UProgressBar> HpProgressBar;
 
-	// ÃÖ´ë Ã¼·Â °ª.
+	// HP ìŠ¤íƒ¯ ì •ë³´ë¥¼ í…ìŠ¤íŠ¸ë¡œ ë³´ì—¬ì£¼ê¸° ìœ„í•œ í…ìŠ¤íŠ¸ ë¸”ë¡ ë³€ìˆ˜.
+	// CurrentHp / MaxHp.
+	UPROPERTY()
+	TObjectPtr<class UTextBlock> HpStat;
+
+	// í˜„ì¬ ì²´ë ¥ ê°’.
+	UPROPERTY()
+	float CurrentHp;
+
+	// ìµœëŒ€ ì²´ë ¥ ê°’.
 	UPROPERTY()
 	float MaxHp;
 
