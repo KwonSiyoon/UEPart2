@@ -1,7 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "Player/ABPlayerController.h"
 #include "UI/ABHUDWidget.h"
+#include "ABSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
+
+DEFINE_LOG_CATEGORY(LogABPlayerController);
 
 AABPlayerController::AABPlayerController()
 {
@@ -11,6 +15,31 @@ AABPlayerController::AABPlayerController()
 	{
 		ABHUDWidgetClass = ABHUDWidgetRef.Class;
 	}
+}
+
+void AABPlayerController::GameScoreChanged(int32 NewScore)
+{
+	K2_OnScoreChanged(NewScore);
+}
+
+void AABPlayerController::GameClear()
+{
+	K2_OnGameClaer();
+}
+
+void AABPlayerController::GameOver()
+{
+	K2_OnGameOver();
+
+	// 게임이 끝나면 세이브 게임을 활용해 데이터 저장.
+	if (!UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("Player0"), 0))
+	{
+		UE_LOG(LogABPlayerController, Error, TEXT("Save Game Error!"));
+	}
+
+	// 게임이 종료되면, 재시도 횟수가 증가 -> 이를 알 수 있도록 이벤트 발행.
+	K2_OnGameRetryCount(SaveGameInstance->RetryCount);
+
 }
 
 void AABPlayerController::BeginPlay()
@@ -23,14 +52,35 @@ void AABPlayerController::BeginPlay()
 	// 구조체를 넣어준다. FInputModeDataBase를 상속한 구조체.
 	SetInputMode(GameInput);
 
-	// 위젯 생성.
-	ABHUDWidget = CreateWidget<UABHUDWidget>(this, ABHUDWidgetClass);
+	// 게임이 시작되면, 저장된 게임이 있는지 먼저 확인하고, 이를 로드.
+	// LoadGameFromSlot -> 저장된 게임을 로드할 때 사용.
+	// 1: 저장할 파일 이름.
+	// 2: 플레이어 ID -> 싱글 플레이어 게임의 경우 항상 0.
+	SaveGameInstance = Cast<UABSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Player0"), 0));
 
-	// 위젯이 문제 없이 생성 됐으면,
-	if (ABHUDWidget)
+	// 이미 저장된 게임이 있는 경우 재시도 횟수 증가 처리.
+	if (SaveGameInstance)
 	{
-		// 위젯을 화면에 추가해 UI가 보일 수 있도록 설정.
-		ABHUDWidget->AddToViewport();
+		SaveGameInstance->RetryCount++;
 	}
+	// 없는 경우, 새로운 게임 저장 객체 생성.
+	else
+	{
+		SaveGameInstance = NewObject<UABSaveGame>();
+	}
+
+	// 게임을 시작할 때에도 재시도 횟수 정보를 알 수 있도록 이벤트 발행.
+	K2_OnGameRetryCount(SaveGameInstance->RetryCount);
+
+
+	//// 위젯 생성.
+	//ABHUDWidget = CreateWidget<UABHUDWidget>(this, ABHUDWidgetClass);
+
+	//// 위젯이 문제 없이 생성 됐으면,
+	//if (ABHUDWidget)
+	//{
+	//	// 위젯을 화면에 추가해 UI가 보일 수 있도록 설정.
+	//	ABHUDWidget->AddToViewport();
+	//}
 
 }

@@ -1,32 +1,79 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ABGameMode.h"
-//#include "Player/ABPlayerController.h"
+#include "Player/ABPlayerController.h"
 
 AABGameMode::AABGameMode()
 {
-	// Class¸¦ °¡Á®¿Ã ¶§´Â µÚ¿¡ '_C'¸¦ ºÙ¿©ÁØ´Ù.
-	// Asset¿¡ ¼ÓÇØÀÖ´Â Class¸¦ °¡Á®¿Ã ¶§ _C¸¦ ºÙ¿© ¸í½ÃÀûÀ¸·Î Class¸¦ °¡Á®¿Â´Ù°í ÇØÁà¾ß °¡Á®¿À±â °¡´É.
+	// Classë¥¼ ê°€ì ¸ì˜¬ ë•ŒëŠ” ë’¤ì— '_C'ë¥¼ ë¶™ì—¬ì¤€ë‹¤.
+	// Assetì— ì†í•´ìˆëŠ” Classë¥¼ ê°€ì ¸ì˜¬ ë•Œ _Cë¥¼ ë¶™ì—¬ ëª…ì‹œì ìœ¼ë¡œ Classë¥¼ ê°€ì ¸ì˜¨ë‹¤ê³  í•´ì¤˜ì•¼ ê°€ì ¸ì˜¤ê¸° ê°€ëŠ¥.
 	//static ConstructorHelpers::FClassFinder<APawn> DefaultCharacterRef(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"));
 	static ConstructorHelpers::FClassFinder<APawn> DefaultCharacterRef(TEXT("/Script/ArenaBattleDemo.ABCharacterPlayer"));
 
 
-	// GameModeÀÇ Default Pawn Class ¼³Á¤.
+	// GameModeì˜ Default Pawn Class ì„¤ì •.
 	if (DefaultCharacterRef.Class)
 	{
 		DefaultPawnClass = DefaultCharacterRef.Class;
 	}
 
-	// GameModeÀÇ PlayerController Class ¼³Á¤.
-	// header¸¦ includeÇØ¼­ class¸¦ °¡Á®¿À´Â ¹æ¹ı.
+	// GameModeì˜ PlayerController Class ì„¤ì •.
+	// headerë¥¼ includeí•´ì„œ classë¥¼ ê°€ì ¸ì˜¤ëŠ” ë°©ë²•.
 	//PlayerControllerClass = AABPlayerController::StaticClass();
-	// ConstructorHelpers::FClassFinder·Î °¡Á®¿Ã ¶§ ÀåÁ¡ : header¸¦ include ÇØÁÖÁö ¾Ê¾Æµµ °¡´ÉÇÏ´Ù.
-	// header¸¦ includeÇÏÁö ¾ÊÀ¸¸é ÄÄÆÄÀÏ ¼Óµµ¸¦ ´õ ºü¸£°Ô ÇÒ ¼ö ÀÖ´Ù. 
+	// ConstructorHelpers::FClassFinderë¡œ ê°€ì ¸ì˜¬ ë•Œ ì¥ì  : headerë¥¼ include í•´ì£¼ì§€ ì•Šì•„ë„ ê°€ëŠ¥í•˜ë‹¤.
+	// headerë¥¼ includeí•˜ì§€ ì•Šìœ¼ë©´ ì»´íŒŒì¼ ì†ë„ë¥¼ ë” ë¹ ë¥´ê²Œ í•  ìˆ˜ ìˆë‹¤. 
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(TEXT("/Script/ArenaBattleDemo.ABPlayerController"));
 	if (PlayerControllerClassRef.Class)
 	{
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
 
+	// ê¸°ë³¸ê°’ ì„¤ì •.
+	ClearScore = 3;
+	CurrentScore = 0;
+	bIsCleared = false;
+
+}
+
+void AABGameMode::OnPlayerScoreChanged(int32 NewPlayerScore)
+{
+	// í˜„ì¬ ì ìˆ˜ë¥¼ ìƒˆë¡œìš´ ì ìˆ˜ë¡œ ì—…ë°ì´íŠ¸.
+	CurrentScore = NewPlayerScore;
+
+	// í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ê°€ì ¸ì˜¤ê¸°.
+	AABPlayerController* ABPlayerController = Cast<AABPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	// í˜•ë³€í™˜ í™•ì¸.
+	if (ABPlayerController)
+	{
+		ABPlayerController->GameScoreChanged(CurrentScore);
+	}
+
+	// ê²Œì„ í´ë¦¬ì–´ ì—¬ë¶€ í™•ì¸.
+	if (CurrentScore >= ClearScore)
+	{
+		bIsCleared = true;
+		// í˜•ë³€í™˜ í™•ì¸.
+		if (ABPlayerController)
+		{
+			ABPlayerController->GameClear();
+		}
+	}
+}
+
+void AABGameMode::OnPlayerDead()
+{
+	// í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ê°€ì ¸ì˜¤ê¸°.
+	AABPlayerController* ABPlayerController = Cast<AABPlayerController>(GetWorld()->GetFirstPlayerController());
+	// í˜•ë³€í™˜ í™•ì¸.
+	if (ABPlayerController)
+	{
+		ABPlayerController->GameOver();
+	}
+}
+
+bool AABGameMode::IsGameCleared()
+{
+	return bIsCleared;
 }
